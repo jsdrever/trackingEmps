@@ -32,6 +32,7 @@ db.connect(err => {
 })
 
 // Default response for any other request (Not Found)
+//! Where do i call the req?
 app.use((req, res) => {
     res.status(404).end();
 });
@@ -54,6 +55,7 @@ const questions = [
 
 
 // This writes the file and puts the data on the file
+//! do i use write to file since its saving to a server? using this is kinda making it work. not sure if it belongs
 function writeToFile(fileName, data) {
     fs.writeFileSync(fileName, data, (err) =>
         err ? console.error(err) : console.log('Success!'))
@@ -67,7 +69,7 @@ function init() {
                 viewDept()
             } else if (answers.contact === 'View All Roles') {
                 viewRoles()
-                
+
             } else if (answers.contact === 'View All Employees') {
                 viewEmps()
             } else if (answers.contact === 'Add Department') {
@@ -81,11 +83,12 @@ function init() {
                 // SELECT * FROM department
                 db.query('SELECT * FROM department', function (err, results) {
                     console.table(results);
-                    if (err) console.err(err) 
-                    
+                    if (err) console.err(err)
+
                     init();
                 });
             }
+            // SELECT * FROM roles
             function viewRoles() {
                 db.query('SELECT * FROM roles', function (err, results) {
                     console.table(results);
@@ -95,6 +98,7 @@ function init() {
                 });
 
             }
+            // SELECT * FROM employees
             function viewEmps() {
                 db.query('SELECT * FROM employee', function (err, results) {
                     console.table(results);
@@ -137,19 +141,19 @@ function init() {
                 message: 'What is the salary for this role?'
             }
         ])
-        .then(answers => {
-            db.query(`INSERT INTO roles(job_title, role_dept, salary) VALUES ("${answers.name}", "${answers.dept_name}", "${answers.salary}" )`, function (err, results) {
-                console.table(results);
-                if(err) console.err(err);
-                init();
+            .then(answers => {
+                db.query(`INSERT INTO roles(job_title, role_dept, salary) VALUES ("${answers.name}", "${answers.dept_name}", "${answers.salary}" )`, function (err, results) {
+                    console.table(results);
+                    if (err) console.err(err);
+                    init();
+                })
             })
-        })
     }
     function updateRole() {
         inquirer.prompt([
             {
                 type: 'list',
-                name: 'role',
+                name: 'name',
                 message: 'Which employee are you updating',
                 choices: [
                     'Captain Ahab',
@@ -161,6 +165,7 @@ function init() {
                     'Eren Yeager',
                     'Annie Edison',
                 ]
+                //! Unsure if this is the correct way to select from employee table
             },
             {
                 type: 'list',
@@ -173,23 +178,32 @@ function init() {
                     'Sales',
                     'Services',
                 ]
-            }
+                //! Same concern as the employee table problem
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What will this employees salary be with their new role?'
+            },
+
         ])
-        .then(answers => {
-            db.query(`UPDATE employee`)
-            //! how to I write updates??
-        })
+            .then(answers => {
+                db.query(`UPDATE employee SET(job_title, role_dept, salary) = ("${answers.name}", "${answers.role}", "${answers.salary}")`,
+                    function (err, results) {
+                        console.table(results);
+                        if (err) console.err(err);
+                        init();
+                    })
+                //! how to I write updates??
+            })
     }
 }
 
-
+// Put it in a server using the port variable
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
 init();
 
-        // Query database for the node server.js
-        // todo Do i need to make one for each table/option: dept, role, employee?
-        //! make them the return for switch case on the inquirer prompts 
 

@@ -15,3 +15,10 @@ FROM roles;
 
 INSERT INTO roles (role_id, job_title, role_dept, salary)
 VALUES  (${}, ${}, ${}, ${}),
+
+UPDATE table_name
+SET name = "name of the thing being updated"
+SET job_title
+SET role_dept
+SET salary
+WHERE id = 1;
