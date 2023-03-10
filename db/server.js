@@ -120,6 +120,7 @@ function init() {
                 db.query('INSERT INTO department(dept_name) VALUES ("' + answers.name + '")', function (err, results) {
                     console.table(results);
                     if (err) console.err(err);
+                    init();
                 })
             })
     }
@@ -155,16 +156,7 @@ function init() {
                 type: 'list',
                 name: 'name',
                 message: 'Which employee are you updating',
-                choices: [
-                    'Captain Ahab',
-                    'Quee Queg',
-                    'Moby Dick',
-                    'Ish Mael',
-                    'R.J. MacReady',
-                    'Ben Chang',
-                    'Eren Yeager',
-                    'Annie Edison',
-                ]
+                choices: []
                 //! Unsure if this is the correct way to select from employee table
             },
             {
@@ -180,15 +172,10 @@ function init() {
                 ]
                 //! Same concern as the employee table problem
             },
-            {
-                type: 'input',
-                name: 'salary',
-                message: 'What will this employees salary be with their new role?'
-            },
 
         ])
             .then(answers => {
-                db.query(`UPDATE employee SET(job_title, role_dept, salary) = ("${answers.name}", "${answers.role}", "${answers.salary}")`,
+                db.query(`UPDATE employee SET(job_title, role_dept) = ("${answers.name}", "${answers.role}", "${answers.salary}" ) WHERE =  `,
                     function (err, results) {
                         console.table(results);
                         if (err) console.err(err);
